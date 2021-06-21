@@ -1,5 +1,7 @@
 package com.beau.util;
 
+import com.beau.constant.Constant;
+
 import java.io.File;
 
 /**
@@ -35,6 +37,7 @@ public class FileUtil {
             return null;
         }
 
+
         File apkFile = new File(newApkFilePath);
         if (apkFile.exists()){
             System.out.println("反编译文件夹已经存在");
@@ -50,6 +53,7 @@ public class FileUtil {
      * @return
      */
     public String getApkToolPath(){
+        //subString是去除获取到的字符串的首个字符  "/"
         String apktoolPath = this.getClass().getClassLoader().getResource("tool/apktool.jar").getPath().substring(1);
         if (apktoolPath == null){
             System.out.println(TAG + " 获取apktool路径失败");
@@ -59,10 +63,21 @@ public class FileUtil {
         return apktoolPath;
     }
 
+    /**
+     * 查找回编译后的dist文件夹
+     * @param apkPath
+     */
+    public void getDistFile(String apkPath){
+
+        File recodeFile = new File(apkPath + Constant.DIST);
+        boolean hasDist = recodeFile.exists();
+
+        System.out.println(TAG + " 存在dist文件夹： " + hasDist);
+
+    }
 
     public static void main(String[] arg){
-//         FileUtil.getInstance().createDecodeFile("G:\\injectApk\\June\\04\\app-release.apk");
-        FileUtil.getInstance().getApkToolPath();
+        FileUtil.getInstance().getDistFile("G:\\injectApk\\June\\04\\app-release");
     }
 
 }

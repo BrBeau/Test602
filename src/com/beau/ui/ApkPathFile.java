@@ -1,5 +1,7 @@
 package com.beau.ui;
 
+import com.beau.func.RecodeApk;
+
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -18,8 +20,11 @@ import java.util.List;
 public class ApkPathFile extends JTextField implements DropTargetListener {
 
     public String TAG =  ApkPathFile.class.getSimpleName();
+    private RecodeApk recodeApk;
+
     public ApkPathFile(){
         new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
+        recodeApk = RecodeApk.getInstance();
     }
 
     @Override
@@ -56,6 +61,7 @@ public class ApkPathFile extends JTextField implements DropTargetListener {
                     File file = (File) it.next();
                     this.setText(file.getAbsolutePath());
                     System.out.println(TAG + " apk路径获取成功： " + file.getAbsolutePath());
+                    recodeApk.getApkFilePathSuccess(file.getAbsolutePath());
                 }
             } catch (UnsupportedFlavorException e) {
                 e.printStackTrace();

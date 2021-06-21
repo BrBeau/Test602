@@ -1,5 +1,8 @@
 package com.beau.ui;
 
+import com.beau.func.RecodeApk;
+import com.beau.func.SignApk;
+
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -18,10 +21,12 @@ import java.util.List;
 public class SignPathFile extends JTextField implements DropTargetListener {
 
     private String TAG = SignPathFile.class.getSimpleName();
+    private SignApk signApk;
 
     public SignPathFile(String hint){
         this.setText(hint);
         new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
+        signApk = SignApk.getInstance();
     }
 
     @Override
@@ -58,6 +63,7 @@ public class SignPathFile extends JTextField implements DropTargetListener {
                     File file = (File) iterator.next();
                     this.setText(file.getAbsolutePath());
                     System.out.println(TAG + " 签名路径获取成功： " + file.getAbsolutePath());
+                    signApk.getSignPathSuccess(file.getAbsolutePath());
                 }
             } catch (UnsupportedFlavorException e) {
                 e.printStackTrace();
