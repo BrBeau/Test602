@@ -3,7 +3,9 @@ package com.beau.func;
 import com.beau.constant.Constant;
 import com.beau.interfaces.ApkFilePathInterface;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * 回编译类
@@ -52,11 +54,33 @@ public class RecodeApk implements ApkFilePathInterface {
         System.out.println(TAG + " 回编译命令： " + execRecodeCmd);
 
         Runtime runtime = Runtime.getRuntime();
+        BufferedReader br = null;
         try {
             Process process = runtime.exec(execRecodeCmd);
+            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = null;
+            while ((line = br.readLine()) != null){
+                System.out.println(line);
+            }
+
+            if (process.waitFor() == 0){
+                System.out.println(TAG + " 回编译执行结束");
+                //todo: 执行签名操作
+
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null){
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
 

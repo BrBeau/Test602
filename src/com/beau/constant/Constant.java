@@ -34,4 +34,6 @@ public class Constant {
     public static final String PACKAGE_ATTR = "package";
     public static final String UTF_8 = "UTF-8";
     public static final String DIST = "\\dist";
+    public static final String ANDROID_MANIFEST_DIR = "\\AndroidManifest.xml";
+    public static final String SIGN_OUT_APK_DIR = "\\signOut.apk";
 }

@@ -76,6 +76,14 @@ public class FileUtil {
 
     }
 
+    /**
+     * 签名成功后删除原有的文件
+     * @param decodeFile 反编译后的文件夹
+     */
+    public void deleteFile(File decodeFile){
+
+    }
+
     public static void main(String[] arg){
         FileUtil.getInstance().getDistFile("G:\\injectApk\\June\\04\\app-release");
     }

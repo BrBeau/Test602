@@ -41,8 +41,9 @@ public class ManifestUtil {
     /**
      * 解析manifest
      * @param manifestPath manifest路径
+     * @param newPackageName 新包名
      */
-    public void parseXmL(String manifestPath){
+    public void parseXmL(String manifestPath, String newPackageName){
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
@@ -53,9 +54,9 @@ public class ManifestUtil {
             NamedNodeMap namedNodeMap = node.getAttributes();
             for (int i=0; i< namedNodeMap.getLength(); i++){
                 if (namedNodeMap.item(i).getNodeName() == Constant.PACKAGE_ATTR){
-                    System.out.println(TAG + " 原始包名： " + namedNodeMap.item(i).getNodeValue());
-                    namedNodeMap.item(i).setNodeValue("com.bbbb");
-
+                    System.out.println(TAG + " 原始包名： " + namedNodeMap.item(i).getNodeValue() + " 新包名： " + newPackageName);
+                    namedNodeMap.item(i).setNodeValue(newPackageName);
+                    System.out.println(TAG + " 解析manifest完成");
                     safeManifest(manifestPath);
                 }
             }
@@ -74,7 +75,7 @@ public class ManifestUtil {
      * 存在则覆盖
      * @param manifestPath manifest路径
      */
-    public void safeManifest(String manifestPath){
+    private void safeManifest(String manifestPath){
 
         TransformerFactory tf = TransformerFactory.newInstance();
         try {
@@ -86,6 +87,10 @@ public class ManifestUtil {
             StreamResult streamResult = new StreamResult(new FileOutputStream(manifestPath));
             //使用transform进行文件保存
             transformer.transform(domSource, streamResult);
+            System.out.println(TAG + " 保存新manifest完成");
+            //todo: 执行回编译操作
+
+
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

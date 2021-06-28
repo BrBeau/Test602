@@ -1,9 +1,12 @@
 package com.beau.func;
 
 import com.beau.constant.Constant;
+import com.beau.interfaces.DecodeInterface;
 import com.beau.util.FileUtil;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * 反编译apk
@@ -25,11 +28,13 @@ public class DecodeApk {
         return mInstance;
     }
 
+
     /**
      * 执行反编译操作
      * @param apkPath apk文件路径
+     * @param decodeInterface 反编译接口
      */
-    public void executeDecode(String apkPath){
+    public void executeDecode(String apkPath, DecodeInterface decodeInterface){
 
         //apkPath路径包含.apk,需要去除后创建改文件夹
         String outPath = FileUtil.getInstance().createDecodeFile(apkPath);
@@ -37,19 +42,36 @@ public class DecodeApk {
 
         System.out.println(TAG + " 执行反编译命令： " + execCmd);
         Runtime runtime = Runtime.getRuntime();
+        BufferedReader bufferedReader = null;
 
         try {
             Process process = runtime.exec(execCmd);
+            bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null){
+                System.out.println(line);
+            }
 
-
+            if (process.waitFor() == 0){
+                System.out.println(TAG + " 反编译执行结束");
+                decodeInterface.decodeSuccess();
+            }
 
         } catch (IOException e) {
+            decodeInterface.decodeFailed(e.toString());
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            decodeInterface.decodeFailed(e.toString());
+            e.printStackTrace();
+        } finally {
+            if (bufferedReader != null){
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-
-    public static void main(String[] arg){
-        DecodeApk.getInstance().executeDecode("G:\\injectApk\\June\\04\\app-release.apk");
-    }
 }

@@ -1,9 +1,14 @@
 package com.beau;
 
 
+import com.beau.constant.Constant;
 import com.beau.func.DecodeApk;
+import com.beau.interfaces.ApkFilePathInterface;
+import com.beau.interfaces.DecodeInterface;
+import com.beau.interfaces.SignPathInterface;
 import com.beau.ui.ApkPathFile;
 import com.beau.ui.SignPathFile;
+import com.beau.util.ManifestUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +22,13 @@ import java.awt.event.ActionListener;
  * @date 210618
  */
 public class MainGui extends JFrame {
+
+    private String TAG = MainGui.class.getSimpleName();
+    private JLabel apkPathLabel,packageLabel,signLabel;
+    private JButton confirmBtn;
+    private ApkPathFile apkPathFile;
+    private JTextField packageField;
+    private SignPathFile signField;
 
     public MainGui(String title){
         super.setTitle(title);
@@ -34,25 +46,26 @@ public class MainGui extends JFrame {
      */
     private void initGui(){
 
-        JLabel apkPathLabel = new JLabel("文件路径");
+        apkPathLabel = new JLabel("文件路径");
         apkPathLabel.setBounds(20, 20, 100, 30);
-        ApkPathFile apkPathFile = new ApkPathFile();
+        apkPathFile = new ApkPathFile();
         apkPathFile.setBounds(120, 20, 300, 30);
         apkPathFile.setText("拖拽或输入文件路径");
 
-        JLabel packageLabel = new JLabel("输入包名");
+        packageLabel = new JLabel("输入包名");
         packageLabel.setBounds(20, 60, 100, 30);
-        JTextField packageField = new JTextField("请输入包名");
+        packageField = new JTextField("请输入包名");
         packageField.setBounds(120, 60, 300, 30);
 
-        JLabel signLabel = new JLabel("签名路径");
+        signLabel = new JLabel("签名路径");
         signLabel.setBounds(20, 100, 100, 30);
-        SignPathFile signField = new SignPathFile("拖拽或输入签名路径");
+        signField = new SignPathFile("拖拽或输入签名路径");
         signField.setBounds(120, 100, 300, 30);
 
 
-        JButton confirmBtn = new JButton("确定");
+        confirmBtn = new JButton("确定");
         confirmBtn.setBounds(200, 280, 80, 30);
+        confirmBtn.setEnabled(true);
 
 
         Container container = this.getContentPane();
@@ -71,25 +84,59 @@ public class MainGui extends JFrame {
 
 
 
-
         confirmBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if (apkPathFile.getText() != null && packageField.getText() != null && signField.getText() != null){
-
-                    DecodeApk.getInstance().executeDecode(apkPathFile.getText());
-                } else{
-                    System.out.println("请输入....");
-                }
+                actionCmd();
 
             }
         });
+    }
 
+    public void actionCmd(){
+
+        if (apkPathFile.getText().contains(".apk")){
+            if (packageField.getText().contains("com.")){
+                if (signField.getText().contains(".keystore")){
+
+                    new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            DecodeApk.getInstance().executeDecode(apkPathFile.getText(), new DecodeInterface() {
+                                @Override
+                                public void decodeSuccess() {
+                                    String manifestPath = apkPathFile.getText().replace(".apk", "") + Constant.ANDROID_MANIFEST_DIR;
+                                    System.out.println(TAG + " 开始解析manifest： " + manifestPath);
+                                    ManifestUtil.getInstance().parseXmL(manifestPath, packageField.getText());
+                                }
+
+                                @Override
+                                public void decodeFailed(String decodeErrorInfo) {
+                                    System.out.println(TAG + " 反编译执行失败： " + decodeErrorInfo);
+                                    return;
+                                }
+                            });
+
+                        }
+                    }).start();
+
+
+                } else {
+                    System.out.println(TAG + " 请输入签名路径");
+
+                }
+            } else {
+                System.out.println(TAG + " 请输入包名");
+            }
+        } else {
+            System.out.println(TAG + " 请输入apk路径");
+        }
 
     }
 
     public static void main(String[] arg){
         new MainGui("MainGui");
     }
+
 }
