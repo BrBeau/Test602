@@ -1,6 +1,7 @@
 package com.beau.util;
 
 import com.beau.constant.Constant;
+import com.beau.func.RecodeApk;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -90,6 +91,7 @@ public class ManifestUtil {
             System.out.println(TAG + " 保存新manifest完成");
             //todo: 执行回编译操作
 
+            RecodeApk.getInstance().executeRecode();
 
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
@@ -99,5 +101,9 @@ public class ManifestUtil {
             e.printStackTrace();
         }
     }
+
+//    public static void main(String[] arg){
+//        ManifestUtil.getInstance().parseXmL();
+//    }
 
 }

@@ -36,4 +36,9 @@ public class Constant {
     public static final String DIST = "\\dist";
     public static final String ANDROID_MANIFEST_DIR = "\\AndroidManifest.xml";
     public static final String SIGN_OUT_APK_DIR = "\\signOut.apk";
+
+    //apktool.yml
+    public static String APK_TOOL_YML_FILE = "\\apktool.yml";
+    public static String APKTOOL_YML_FIRST_LINE = "!!brut.androlib.meta.MetaInfo";
+    public static String APK_FILE_NAME = "apkFileName";
 }

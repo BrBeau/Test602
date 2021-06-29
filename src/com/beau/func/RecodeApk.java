@@ -2,6 +2,7 @@ package com.beau.func;
 
 import com.beau.constant.Constant;
 import com.beau.interfaces.ApkFilePathInterface;
+import com.beau.util.YmlUntil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,6 +67,9 @@ public class RecodeApk implements ApkFilePathInterface {
             if (process.waitFor() == 0){
                 System.out.println(TAG + " 回编译执行结束");
                 //todo: 执行签名操作
+                System.out.println(TAG + " 开始执行签名操作");
+                //apkPath\\dist\\***.apk
+                SignApk.getInstance().executeSign(mApkPath + Constant.DIST + "\\" + YmlUntil.getInstance().getApkFileName(mApkPath + "\\" + Constant.APK_TOOL_YML_FILE));
 
             }
 

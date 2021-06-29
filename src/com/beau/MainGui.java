@@ -8,6 +8,7 @@ import com.beau.interfaces.DecodeInterface;
 import com.beau.interfaces.SignPathInterface;
 import com.beau.ui.ApkPathFile;
 import com.beau.ui.SignPathFile;
+import com.beau.util.FileUtil;
 import com.beau.util.ManifestUtil;
 
 import javax.swing.*;
@@ -103,10 +104,17 @@ public class MainGui extends JFrame {
 
                         @Override
                         public void run() {
+
                             DecodeApk.getInstance().executeDecode(apkPathFile.getText(), new DecodeInterface() {
+
                                 @Override
                                 public void decodeSuccess() {
+
                                     String manifestPath = apkPathFile.getText().replace(".apk", "") + Constant.ANDROID_MANIFEST_DIR;
+                                    String ymlPath = apkPathFile.getText().replace(".apk", "") + Constant.APK_TOOL_YML_FILE;
+                                    //反编译完成，同时对yml文件进行修改
+                                    FileUtil.getInstance().replaceYmlFirstLine(ymlPath);
+
                                     System.out.println(TAG + " 开始解析manifest： " + manifestPath);
                                     ManifestUtil.getInstance().parseXmL(manifestPath, packageField.getText());
                                 }

@@ -2,7 +2,7 @@ package com.beau.util;
 
 import com.beau.constant.Constant;
 
-import java.io.File;
+import java.io.*;
 
 /**
  * 文件工具类
@@ -84,8 +84,53 @@ public class FileUtil {
 
     }
 
+    /**
+     * 反编译后apktool.yml文件第一行存在无法识别的字符串，需要去除
+     * @param ymlPath apktool.yml路径
+     */
+    public void replaceYmlFirstLine(String ymlPath){
+        System.out.println(TAG + " ymlPath: " + ymlPath);
+        File ymlFile = new File(ymlPath);
+        if (!ymlFile.canExecute()){
+            System.out.println(TAG + "apktool.yml文件不存在");
+            return;
+        }
+        BufferedReader bufferedReader = null;
+        PrintWriter printWriter = null;
+        String line = System.lineSeparator();
+        StringBuffer stringBuffer = new StringBuffer(); //临时容器
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(ymlFile));
+            for (String str = bufferedReader.readLine(); str != null; str = bufferedReader.readLine()){
+                if (str.contains(Constant.APKTOOL_YML_FIRST_LINE)){
+                    System.out.println(TAG + "存在: " + Constant.APKTOOL_YML_FIRST_LINE);
+                    str = str.replaceAll(Constant.APKTOOL_YML_FIRST_LINE, "");
+                }
+                stringBuffer.append(str + line);
+            }
+            printWriter = new PrintWriter(new FileWriter(ymlFile), true);
+            printWriter.println(stringBuffer);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferedReader != null){
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (printWriter != null){
+                printWriter.close();
+            }
+        }
+    }
+
     public static void main(String[] arg){
-        FileUtil.getInstance().getDistFile("G:\\injectApk\\June\\04\\app-release");
+        FileUtil.getInstance().replaceYmlFirstLine("H:\\app-release\\apktool.yml");
     }
 
 }
